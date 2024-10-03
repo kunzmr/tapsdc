@@ -59,6 +59,8 @@ fit_single_sdc = function(x, y, n_max = 1, fixed_values = NULL) {
     kd = 0
   )
 
+  # tau = 2 * sd(y)
+
   str_form = c("y ~ ", "baseline", " + ", "beta",
                " * tapsdc::sdc(x, ", "tau", ", ",
                "ka", ", ", "kd", ")")
