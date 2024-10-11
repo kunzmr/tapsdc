@@ -79,9 +79,15 @@ fit_single_sdc = function(x, y, n_max = 1, fixed_values = NULL) {
 
   fit_list = vector(mode = "list", length = n_max)
   fit_rmse = rep(1e6, n_max)
+  lower = rep(1e-3, length(init))
+  if ("baseline" %in% names(init)) {
+    init[["baseline"]] = min(y)
+  }
 
   for (i in 1:n_max) {
-    fit_list[[i]] = try(minpack.lm::nlsLM(formula(str_form), start = init),
+    fit_list[[i]] = try(minpack.lm::nlsLM(formula(str_form),
+                                          lower = lower,
+                                          start = init),
                         silent = TRUE
     )
     if (class(fit_list[[i]]) == "nls") {

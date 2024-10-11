@@ -27,8 +27,6 @@
 #'
 #' @export fit_sdc
 fit_sdc = function(x, y, n_max = 1, fixed_values = NULL, n_cores = NULL) {
-
-
   if (is.null(dim(y))) {
     result = tapsdc::fit_single_sdc(x = x, y = y, n_max = n_max)
   } else {
@@ -42,7 +40,7 @@ fit_sdc = function(x, y, n_max = 1, fixed_values = NULL, n_cores = NULL) {
       n_cores = parallel::detectCores() - 1
     }
     cl = parallel::makeCluster(n_cores)
-    results = parallel::parLapply(cl, y_list, tapsdc::fit_single_sdc,
+    results = parallel::parLapply(cl, X = y_list, fun = tapsdc::fit_single_sdc,
                                   x = x,
                                   fixed_values = fixed_values, n_max = n_max)
     parallel::stopCluster(cl)
