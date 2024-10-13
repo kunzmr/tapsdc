@@ -30,40 +30,9 @@ fit_sdc = function(x, y, n_max = 1, fixed_values = NULL, n_cores = NULL) {
   if (is.null(dim(y))) {
     result = tapsdc::fit_single_sdc(x = x, y = y, n_max = n_max)
   } else {
-
-    y_list = vector(mode = "list", length = ncol(y))
+    result = vector(mode = "list", length = ncol(y))
     for (i in 1:ncol(y)) {
-      y_list[[i]] = y[, i]
-    }
-
-    if (is.null(n_cores)) {
-      n_cores = parallel::detectCores() - 1
-    }
-    cl = parallel::makeCluster(n_cores)
-    results = parallel::parLapply(cl, X = y_list, fun = tapsdc::fit_single_sdc,
-                                  x = x,
-                                  fixed_values = fixed_values, n_max = n_max)
-    parallel::stopCluster(cl)
-
-    result = list(
-      data = NULL,
-      coefs = NULL,
-      nls_model = vector(mode = "list", length = ncol(y)),
-      ls_model = vector(mode = "list", length = ncol(y))
-    )
-    for (i in 1:length(results)) {
-      results[[i]]$data$index = colnames(y)[i]
-      results[[i]]$coefs$index = colnames(y)[i]
-
-      if (i == 1) {
-        result$data = results[[i]]$data
-        result$coefs = results[[i]]$coefs
-      } else {
-        result$data = rbind(result$data, results[[i]]$data)
-        result$coefs = rbind(result$coefs, results[[i]]$coefs)
-      }
-      result$nls_model[[i]] = results[[i]]$nls_model
-      result$ls_model[[i]] = results[[i]]$ls_model
+      result[[i]] = tapsdc::fit_single_sdc(x = x, y = y[, i], n_max = n_max)
     }
   }
 
